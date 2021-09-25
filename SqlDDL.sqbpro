@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/HSM/Desktop/WorkSpace_book/requests_1/SQLite/SqlDDL.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure query browser pragmas" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="125"/><column_width id="3" width="2555"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,15:mainsqlite_sequence"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="board" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="58"/><column index="2" value="82"/><column index="3" value="100"/><column index="4" value="117"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="sqlite_sequence" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort><column index="2" mode="0"/></sort><column_widths><column index="1" value="68"/><column index="2" value="58"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">DROP TABLE board;	-- DROP TABLE 삭제할 테이블명
+Drop TABLE user;
+
+--CREATE TABLE 테이블명 (속성명 타입 제약 ~)
+CREATE TABLE post (id INTEGER PRIMARY KEY AUTOINCREMENT,
+title TEXT NOT NULL DEFAULT &quot;제목없음&quot;,
+content TEXT NOT NULL DEFAULT &quot;내용없음&quot;);
+
+--CREATE TABLE 테이블명 (속성명 타입 제약 ~)
+CREATE TABLE user (email TEXT PRIMARY KEY,
+passwd TEXT NOT NULL,
+gender TEXT CHECK (gender = 'male' or gender = 'female'),
+age INTEGER NOT NULL CHECK (age &gt;= 19));
+
+--ALTER TABLE 수정할 테이블 / 명령어 / 수정사항
+ALTER TABLE post RENAME TO board; -- post 테이블의 이름을 board로 변경
+
+--board 테이블에 post_date 컬럼을 date형식으로 추가 DEFAULT 값은 현재 날짜 시각
+ALTER TABLE board ADD COLUMN post_date date DEFAULT CURRENT_TIMESTAMP; 
+ALTER TABLE board RENAME COLUMN post_date to board_date;
+ALTER TABLE board ADD COLUMN author TEXT NOT NULL DEFAULT 'nobody';
+
+--INSERT INTO 입력할 테이블 (입력할 속성명) VALUES (입력할 데이터)
+INSERT INTO user (email,passwd,gender,age) VALUES ('aaa1@naver.com','1234','male',25);
+INSERT INTO user (email,passwd,gender,age) VALUES ('bbb2@daum.net','4567','female',30);
+INSERT INTO user (email,passwd,gender,age) VALUES ('ccc3@gmail.com','8910','male',29);
+INSERT INTO user (email,passwd,gender,age) VALUES ('ddd4@hanmail.com','1112','female',40);
+
+--CURRENT_TIMESTAMP 과 datetime('now')는 현재 시간을 알아내는 역할을 함.
+INSERT INTO board (title,content,board_date) VALUES ('SQL_test1','test content',CURRENT_TIMESTAMP);
+INSERT INTO board (title,content,board_date,author) VALUES ('SQL_t2','test content',datetime('now'),'bbb2@daum.net');
+INSERT INTO board (title,content) VALUES ('SQL_te3','test content');
+INSERT INTO board (title,content,author) VALUES ('SQL_test4','test content','ddd4@hanmail.com');
+
+SELECT * FROM board WHERE id &lt;3; --board 테이블에서 id가 3 미만인 모든 컬럼을 가져온다.
+SELECT * FROM board WHERE title like '%test_';	--제목이 %test_ 조건에 맞는 모든 컬럼
+SELECT * FROM board WHERE id BETWEEN 2 AND 3;	--id가 2와 3 사이인 모든 컬럼
+SELECT * FROM board WHERE id IN (1,4);		--id가 IN( 조건 ) 에 포함된 모든 컬럼
+SELECT * FROM board ORDER BY id DESC;		-- ORDER BY (기준) DECS / 내림차순 정렬
+
+-- UPDATE 데이터갱신할 테이블 SET 갱신사항 WHERE 조건
+UPDATE board SET title = 'set_1',
+content = 'update_board',
+board_date = datetime('now')
+WHERE id = 2;
+
+SELECT * FROM board;
+-- DELETE FROM 삭제명령할 테이블 WHERE 조건
+DELETE FROM board WHERE id = 3;
+SELECT * FROM board;
+SELECT * FROM user;
+
+--SELECT 검색속성,개수 FROM 찾을 테이블 GROUP BY 묶을 속성
+-- user 테이블의 gender 속성이 각각 몇개씩 있는지 검색
+SELECT gender,count(*) FROM user GROUP BY gender;
+--user 테이블의 gender 속성별로 age 가 20 이상인 값들의 평균값을 검색
+SELECT gender,avg(age) FROM user WHERE age &gt; 20 GROUP BY gender;
+--두 개의 테이블에서 각 속성이 조건에 알맞은 테이블을 함께 출력
+SELECT * FROM board INNER JOIN user WHERE board.author = user.email;
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
